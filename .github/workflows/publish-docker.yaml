@@ -1,0 +1,32 @@
+name: Publish Docker Images
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Merge"]
+    types:
+      - completed
+
+concurrency:
+  group: "${{ github.ref }}-${{ github.workflow }}"
+  cancel-in-progress: true
+
+jobs:
+  start_cluster_main:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.repository_owner == 'rbuysse'
+    name: Start buildx cluster
+    runs-on: ubuntu-latest
+    outputs:
+      label: ${{ steps.start-buildx-cluster.outputs.label }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Display envvars
+        run: env
