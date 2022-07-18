@@ -2,8 +2,6 @@ name: Merge
 
 on:
   push:
-  schedule:
-    - cron: "*/10 * * * *"
   workflow_dispatch:
 
 jobs:
